@@ -39,6 +39,8 @@ export const DayContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
+  border-radius: 5px;
+  border: 1px solid gray;
 `
 
 export const CalendarContainer = styled.div<{ fontSize?: string }>`
@@ -52,7 +54,7 @@ export const CalendarContainer = styled.div<{ fontSize?: string }>`
 export const Days = styled.div<{ fontSize?: string }>`
   position: sticky;
   left: 0;
-  z-index: 5;
+  z-index: 90;
   background: #282a36;
   min-height: 3rem;
   min-width: 3rem;
@@ -74,4 +76,18 @@ export const HourContainer = styled.div<{ size: string }>`
   width: 100%;
   position: relative;
 `
+
+export const EventCard = styled.div<{ margin: string, width: string }>`
+  position: absolute;
+  left: -1px;
+  margin-left: ${(props) => props.margin && `${props.margin}%`};
+  height: 90%;
+  width: ${(props) => props.width && `${props.width}%`};;
+  overflow: hidden;
+  white-space: initial;
+  text-overflow: ellipsis;
+  z-index: 2;
+  background: #bd93f9;
+  border-radius: 10px;
+  box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.25);`
 

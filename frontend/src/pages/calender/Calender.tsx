@@ -8,11 +8,11 @@ import {
   DayContainer,
   Days,
   HourContainer,
-  Time
+  Time,
+  EventCard
 } from './styles/Calender.styled'
 
 // TODO:
-// Render mock values
 // Add Events
 // - Use MUI to create panel and selectors
 // - Use Redux Form for form validation
@@ -25,6 +25,18 @@ import {
 const Calender = () => {
   const getSize = () => {
     return (1 / timings.length) * 200
+  }
+
+  const getMargin = (startTime: string) => {
+    const m = ((parseInt(startTime) - 600)/(timings.length * 100) * 100).toString()
+    console.log('margin:', m)
+    return m
+  }
+
+  const getWidth = (time: {start: string, end: string} ) => {
+    const w = ((parseInt(time.end) - parseInt(time.start))/(timings.length * 100) * 100).toString()
+    console.log('width:', w)
+    return w
   }
 
   return (
@@ -44,7 +56,11 @@ const Calender = () => {
             <>
               <CalendarContainer key={d.id}>
                 <Days>{d.day}</Days>
-                <HourContainer size={getSize().toString()}/>
+                <HourContainer size={getSize().toString()}>
+                  {mockValues.map((e) => (
+                    <EventCard margin={getMargin(e.time.start)} width={getWidth(e.time)}>{e.event}</EventCard>
+                  ))}
+                </HourContainer>
               </CalendarContainer>
             </>
           ))}
