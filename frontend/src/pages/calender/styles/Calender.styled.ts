@@ -39,8 +39,6 @@ export const DayContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
-  border-radius: 5px;
-  border: 1px solid gray;
 `
 
 export const CalendarContainer = styled.div<{ fontSize?: string }>`
@@ -56,7 +54,7 @@ export const Days = styled.div<{ fontSize?: string }>`
   left: 0;
   z-index: 90;
   background: #282a36;
-  min-height: 3rem;
+  min-height: 5rem;
   min-width: 3rem;
   display: flex;
   justify-content: center;
@@ -81,7 +79,7 @@ export const EventCard = styled.div<{ margin: string, width: string }>`
   position: absolute;
   left: -1px;
   margin-left: ${(props) => props.margin && `${props.margin}%`};
-  height: 90%;
+  height: 95%;
   width: ${(props) => props.width && `${props.width}%`};;
   overflow: hidden;
   white-space: initial;

@@ -13,6 +13,7 @@ import {
 } from './styles/Calender.styled'
 
 // TODO:
+// Colors
 // Add Events
 // - Use MUI to create panel and selectors
 // - Use Redux Form for form validation
@@ -28,15 +29,25 @@ const Calender = () => {
   }
 
   const getMargin = (startTime: string) => {
-    const m = ((parseInt(startTime) - 600)/(timings.length * 100) * 100).toString()
-    console.log('margin:', m)
+    const m = ((parseInt(startTime) - 600) / (timings.length * 100) * 100).toString()
+    // console.log('margin:', m)
     return m
   }
 
-  const getWidth = (time: {start: string, end: string} ) => {
-    const w = ((parseInt(time.end) - parseInt(time.start))/(timings.length * 100) * 100).toString()
-    console.log('width:', w)
+  const getWidth = (time: { start: string, end: string }) => {
+    const w = ((parseInt(time.end) - parseInt(time.start)) / (timings.length * 100) * 100).toString()
+    // console.log('width:', w)
     return w
+  }
+
+  const getSpecialDayStyle = (day: string) => {
+    if (day === 'Mon') {
+      return {borderRadius: '5px 0 0 0'}
+    }
+    if (day === 'Fri') {
+      return {borderRadius: '0 0 0 5px'}
+    }
+    return {}
   }
 
   return (
@@ -55,7 +66,7 @@ const Calender = () => {
           {days.map((d) => (
             <>
               <CalendarContainer key={d.id}>
-                <Days>{d.day}</Days>
+                <Days style={getSpecialDayStyle(d.day)}>{d.day}</Days>
                 <HourContainer size={getSize().toString()}>
                   {mockValues.map((e) => (
                     <EventCard margin={getMargin(e.time.start)} width={getWidth(e.time)}>{e.event}</EventCard>
@@ -82,11 +93,11 @@ const days = [
 ]
 
 const mockValues = [
-  { id: 1, event: 'CS1101S Tutorial', location: 'COM1', type: 'academic', time: { start: '0800', end: '1000' } },
-  { id: 2, event: 'RHMP Recording', location: 'Raffles Hall', type: 'hall', time: { start: '1000', end: '1200' } },
-  { id: 3, event: 'Meetup with friends', location: 'UTown', type: 'others', time: { start: '1200', end: '1400' } },
-  { id: 4, event: 'Hall event', location: 'Raffles Hall', type: 'hall', time: { start: '1400', end: '1700' } },
-  { id: 5, event: 'GET1020 Lecture', location: 'Online', type: 'academic', time: { start: '1700', end: '1800' } },
+  {id: 1, event: 'CS1101S Tutorial', location: 'COM1', type: 'academic', time: {start: '0800', end: '1000'}},
+  {id: 2, event: 'RHMP Recording', location: 'Raffles Hall', type: 'hall', time: {start: '1000', end: '1200'}},
+  {id: 3, event: 'Meetup with friends', location: 'UTown', type: 'others', time: {start: '1200', end: '1400'}},
+  {id: 4, event: 'Hall event', location: 'Raffles Hall', type: 'hall', time: {start: '1400', end: '1700'}},
+  {id: 5, event: 'GET1020 Lecture', location: 'Online', type: 'academic', time: {start: '1700', end: '1800'}},
 ]
 
 export default Calender
