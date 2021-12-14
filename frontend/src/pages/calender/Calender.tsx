@@ -1,43 +1,71 @@
-import React from 'react'
+import React, {useState} from 'react'
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../../store/types";
+
 import {
-  MainContainer,
-  HeaderContainer,
-  WeekContainer,
-  TimingContainer,
   CalendarContainer,
   DayContainer,
   Days,
+  EventCard,
+  EventSubText,
+  EventText,
+  HeaderContainer,
   HourContainer,
+  MainContainer,
   Time,
-  EventCard
+  TimingContainer,
+  WeekContainer,
+  TimeSelect,
+  DateSelect
 } from './styles/Calender.styled'
+import {colors, days, initialForm, timings} from "./data";
+import Fab from '@mui/material/Fab'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from "@mui/material/DialogContent";
+import AddIcon from '@mui/icons-material/Add'
+import Select from '@mui/material/Select'
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import TextField from '@mui/material/TextField'
+import {Form, Field} from 'react-final-form'
 
 // TODO:
-// Colors
-// Add Events
-// - Use MUI to create panel and selectors
-// - Use Redux Form for form validation
-// - Use Reducer to create unique ID
 // Attach API Calls
+// Add Events
+// - Validation of Values
+// - Using actions/reducer
+// - Use Reducer to create unique ID
+// Set Hovers
 // Import NUSMods
 // Month View
 // Account for stacking (Optional)
 
 const Calender = () => {
+  const dispatch = useDispatch()
+  const {eventList, activityList} = useSelector((state: RootState) => state.calender)
+  const [isMenuOpen, setMenuOpen] = useState<boolean>(false)
+
+  const toggleMenu = () =>
+    setMenuOpen(!isMenuOpen)
+
+  const closeMenu = () =>
+    setMenuOpen(false)
+
+
   const getSize = () => {
     return (1 / timings.length) * 200
   }
 
   const getMargin = (startTime: string) => {
-    const m = ((parseInt(startTime) - 600) / (timings.length * 100) * 100).toString()
-    // console.log('margin:', m)
-    return m
+    return ((parseInt(startTime) - 600) / (timings.length * 100) * 100).toString()
   }
 
   const getWidth = (time: { start: string, end: string }) => {
-    const w = ((parseInt(time.end) - parseInt(time.start)) / (timings.length * 100) * 100).toString()
-    // console.log('width:', w)
-    return w
+    return ((parseInt(time.end) - parseInt(time.start)) / (timings.length * 100) * 100).toString()
   }
 
   const getSpecialDayStyle = (day: string) => {
@@ -50,6 +78,7 @@ const Calender = () => {
     return {}
   }
 
+  // @ts-ignore
   return (
     <MainContainer>
       <HeaderContainer>
@@ -68,8 +97,11 @@ const Calender = () => {
               <CalendarContainer key={d.id}>
                 <Days style={getSpecialDayStyle(d.day)}>{d.day}</Days>
                 <HourContainer size={getSize().toString()}>
-                  {mockValues.map((e) => (
-                    <EventCard margin={getMargin(e.time.start)} width={getWidth(e.time)}>{e.event}</EventCard>
+                  {activityList[d.id].map((e) => (
+                    <EventCard margin={getMargin(e.time.start)} width={getWidth(e.time)} color={colors[e.type]}>
+                      <EventText>{e.event}</EventText>
+                      <EventSubText>{e.location}</EventSubText>
+                    </EventCard>
                   ))}
                 </HourContainer>
               </CalendarContainer>
@@ -77,27 +109,114 @@ const Calender = () => {
           ))}
         </DayContainer>
       </WeekContainer>
+      <Fab color="secondary"
+           aria-label="add"
+           style={{position: 'absolute', right: '20px', bottom: '20px'}}
+           onClick={toggleMenu}>
+        <AddIcon/>
+      </Fab>
+      <Dialog open={isMenuOpen}
+              onClose={closeMenu}
+              fullWidth
+              PaperProps={{style: {background: '#282a36', color: 'white', padding: '15px'}}}>
+        <DialogTitle>{'Add Event/Activity'}</DialogTitle>
+        <Form onSubmit={(values) => console.log(values)}
+              initialValues={{...initialForm}}
+              render={({handleSubmit, form, submitting, pristine, values}) => (
+                <form onSubmit={handleSubmit}>
+                  <DialogContent style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-evenly',
+                    minHeight: '250px'
+                  }}>
+                    <DateSelect>
+                      <Field name='day'>
+                        {props => (
+                          <FormControl>
+                            <InputLabel style={{background: '#282a36', color: 'white'}}>Day</InputLabel>
+                            <Select label={props.input.name}
+                                    value={props.input.value}
+                                    onChange={props.input.onChange}>
+                              {days.map((d) => (
+                                <MenuItem value={d.id}>{d.day}</MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        )}
+                      </Field>
+                      <TimeSelect>
+
+                        <Field name='time.start'>
+                          {props => (
+                            <FormControl>
+                              <InputLabel style={{background: '#282a36', color: 'white'}}>Start</InputLabel>
+                              <Select label={props.input.name}
+                                      value={props.input.value}
+                                      onChange={props.input.onChange}>
+                                {timings.map((t) => (
+                                  <MenuItem value={t}>{t}</MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>)}
+                        </Field>
+                        <Field name='time.end'>
+                          {props => (
+                            <FormControl>
+                              <InputLabel style={{background: '#282a36', color: 'white'}}>End</InputLabel>
+                              <Select label={props.input.name}
+                                      value={props.input.value}
+                                      onChange={props.input.onChange}>
+                                {timings.map((t) => (
+                                  <MenuItem value={t}>{t}</MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>
+                          )}
+                        </Field>
+                      </TimeSelect>
+
+                    </DateSelect>
+                    <Field name='name'>
+                      {props => (
+                        <FormControl>
+                          <TextField label='Name'
+                                     value={props.input.value}
+                                     onChange={props.input.onChange}
+                                     fullWidth
+                                     InputLabelProps={{style: {background: '#282a36', color: 'white'}}}>
+
+                          </TextField>
+                        </FormControl>
+                      )}
+                    </Field>
+                    <Field name='type'>
+                      {props => (
+                        <div>
+                          <FormControl>
+                            <InputLabel style={{background: '#282a36', color: 'white'}}>Type</InputLabel>
+                            <Select label={props.input.name}
+                                    value={props.input.value}
+                                    onChange={props.input.onChange}>
+                              <MenuItem value='event'>Event</MenuItem>
+                              <MenuItem value='activity'>Activity</MenuItem>
+                            </Select>
+                          </FormControl>
+                        </div>
+                      )}
+                    </Field>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button variant="contained" onClick={closeMenu}>Cancel</Button>
+                    <Button variant="contained" onClick={closeMenu} type='submit'>Add</Button>
+                  </DialogActions>
+                </form>
+              )}/>
+      </Dialog>
     </MainContainer>
 
   )
 }
 
-const timings = ['0600', '0700', '0800', '0900', '1000', '1100', '1200', '1300', '1400', '1500', '1600', '1700', '1800', '1900', '2000', '2100', '2200', '2300']
-
-const days = [
-  {id: 1, day: 'Mon'},
-  {id: 2, day: 'Tue'},
-  {id: 3, day: 'Wed'},
-  {id: 4, day: 'Thu'},
-  {id: 5, day: 'Fri'},
-]
-
-const mockValues = [
-  {id: 1, event: 'CS1101S Tutorial', location: 'COM1', type: 'academic', time: {start: '0800', end: '1000'}},
-  {id: 2, event: 'RHMP Recording', location: 'Raffles Hall', type: 'hall', time: {start: '1000', end: '1200'}},
-  {id: 3, event: 'Meetup with friends', location: 'UTown', type: 'others', time: {start: '1200', end: '1400'}},
-  {id: 4, event: 'Hall event', location: 'Raffles Hall', type: 'hall', time: {start: '1400', end: '1700'}},
-  {id: 5, event: 'GET1020 Lecture', location: 'Online', type: 'academic', time: {start: '1700', end: '1800'}},
-]
 
 export default Calender

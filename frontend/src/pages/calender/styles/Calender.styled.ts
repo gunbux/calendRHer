@@ -75,7 +75,7 @@ export const HourContainer = styled.div<{ size: string }>`
   position: relative;
 `
 
-export const EventCard = styled.div<{ margin: string, width: string }>`
+export const EventCard = styled.div<{ margin: string, width: string, color: string }>`
   position: absolute;
   left: -1px;
   margin-left: ${(props) => props.margin && `${props.margin}%`};
@@ -85,7 +85,32 @@ export const EventCard = styled.div<{ margin: string, width: string }>`
   white-space: initial;
   text-overflow: ellipsis;
   z-index: 2;
-  background: #bd93f9;
+  color: black;
+  background: ${(props) => props.color && props.color};
   border-radius: 10px;
   box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.25);`
 
+export const EventText = styled.div`
+  padding: 5px 0 0 10px;
+`
+
+export const EventSubText = styled.div`
+  font-size: 13px;
+  padding: 0 10px;
+`
+
+export const TimeSelect = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+`
+
+export const DateSelect = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+`
