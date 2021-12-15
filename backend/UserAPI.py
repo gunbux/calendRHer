@@ -18,6 +18,6 @@ def getAllEvents():
              ] )
         y = list(y)
         for a in y:
-            eventsNameList.append(y)
+            eventsNameList.append(a)
     eventsNameList = str(eventsNameList)
-    return eventsNameList                       
+    return eventsNameList         
