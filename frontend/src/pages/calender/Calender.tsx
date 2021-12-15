@@ -18,7 +18,7 @@ import {
   TimeSelect,
   FlexSelect
 } from './styles/Calender.styled'
-import {colors, days, initialForm, timings, locations, FormValues} from "./data";
+import {colors, days, initialForm, timings, locations, FormValues, events} from "./data";
 import Fab from '@mui/material/Fab'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
@@ -33,7 +33,7 @@ import InputLabel from "@mui/material/InputLabel";
 import TextField from '@mui/material/TextField'
 import FormHelperText from '@mui/material/FormHelperText'
 import {Form, Field} from 'react-final-form'
-import {addActivity, getActivities} from "../../store/Calender/action";
+import {addActivities, addActivity, getActivities} from "../../store/Calender/action";
 import {nanoid} from "nanoid";
 import {activity} from "../../store/Calender/types";
 
@@ -60,26 +60,39 @@ const Calender = () => {
     setMenuOpen(false)
 
   const validateForm = (values: FormValues) => {
-    const errors = {name: "", time: {end: ""}}
-    if (!values.name) {
-      errors.name = "Required"
+    if (values.type === 'activity') {
+      const errors = {name: "", time: {end: ""}}
+      if (!values.name) {
+        errors.name = "Required"
+      }
+      if (values.time.start >= values.time.end) {
+        errors.time.end = "Invalid Time"
+      }
+      return !errors.name && !errors.time.end ? {} : errors
     }
-    if (values.time.start >= values.time.end) {
-      errors.time.end = "Invalid Time"
+    const errors = {group: ""}
+    if (!values.group) {
+      errors.group = "Required"
     }
-    return !errors.name && !errors.time.end ? {} : errors
+    return !errors.group ? {} : errors
   }
 
   const submitForm = (values: FormValues) => {
-    const activity: activity = {
-      id: nanoid(),
-      event: values.name,
-      location: values.location,
-      type: 'hall',
-      time: values.time
+    if (values.type === 'activity') {
+      const activity: activity = {
+        id: nanoid(),
+        event: values.name,
+        location: values.location,
+        type: 'hall',
+        time: values.time
+      }
+      dispatch(addActivity(activity, values.day))
+      closeMenu()
+      return
     }
-    dispatch(addActivity(activity, values.day))
-    closeMenu()
+    const res = events[values.group]
+    console.log(res)
+    // dispatch(addActivities(res))
     return
   }
 
@@ -232,6 +245,8 @@ const Calender = () => {
                             <MenuItem value='Inter Hall Hackathon' key='Inter Hall Hackathon'>Inter Hall
                               Hackathon</MenuItem>
                           </Select>
+                          {props.meta.error && (
+                            <FormHelperText style={{color: 'white'}}>Required</FormHelperText>)}
                         </FormControl>
                       )}
                     </Field>}
