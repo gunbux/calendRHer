@@ -1,6 +1,6 @@
 from flask import Flask,jsonify,request
 from pymongo import cursor
-from db import db 
+from db import db
 import pymongo
 from UserAPI import user
 from EventsAPI import event
@@ -21,7 +21,7 @@ def join_event():
         x=x.get("userID")                                     #get list of userID from dict
     y = list(db.UserList.find({ "userID" : userIDInput }))
     for y in y:
-        y=y.get("eventID")   
+        y=y.get("eventID")
 
     if int(eventIDInput) not in y and userIDInput not in x:        #prevent repeated values in both userlist and eventlist
         db.EventList.update_one({'eventID': int(eventIDInput)}, {'$push': {'userID': userIDInput}})
