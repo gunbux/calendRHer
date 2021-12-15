@@ -30,3 +30,9 @@ code {
   border-radius: 4px;
   /*min-width: 80px !important;*/
 }
+
+.MuiInputBase-root:hover {
+  color: white !important;
+  border: 1px solid #ced4da !important;
+  /*min-width: 80px !important;*/
+}

@@ -88,7 +88,7 @@ export const EventCard = styled.div<{ margin: string, width: string, color: stri
   color: black;
   background: ${(props) => props.color && props.color};
   border-radius: 10px;
-  box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.25);`
+  box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.25);`
 
 export const EventText = styled.div`
   padding: 5px 0 0 10px;
@@ -102,13 +102,13 @@ export const EventSubText = styled.div`
 export const TimeSelect = styled.div`
   display: flex;
   justify-content: space-evenly;
-  align-items: center;
+  align-items: flex-start;
 `
 
-export const DateSelect = styled.div`
+export const FlexSelect = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   @media (max-width: 600px) {
     flex-direction: column;
     align-items: flex-start;

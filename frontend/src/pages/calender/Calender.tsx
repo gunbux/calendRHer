@@ -16,9 +16,9 @@ import {
   TimingContainer,
   WeekContainer,
   TimeSelect,
-  DateSelect
+  FlexSelect
 } from './styles/Calender.styled'
-import {colors, days, initialForm, timings} from "./data";
+import {colors, days, initialForm, timings, locations, FormValues} from "./data";
 import Fab from '@mui/material/Fab'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
@@ -31,17 +31,17 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import TextField from '@mui/material/TextField'
+import FormHelperText from '@mui/material/FormHelperText'
 import {Form, Field} from 'react-final-form'
+import {addActivity} from "../../store/Calender/action";
+import {nanoid} from "nanoid";
+import {activity} from "../../store/Calender/types";
 
 // TODO:
 // Attach API Calls
-// Add Events
-// - Validation of Values
-// - Using actions/reducer
-// - Use Reducer to create unique ID
 // Set Hovers
+// Mock Values for Group Events
 // Import NUSMods
-// Month View
 // Account for stacking (Optional)
 
 const Calender = () => {
@@ -55,6 +55,23 @@ const Calender = () => {
   const closeMenu = () =>
     setMenuOpen(false)
 
+  const validateForm = (values: FormValues) => {
+    const errors = {name: "", time: {end: ""}}
+    if (!values.name) {
+      errors.name = "Required"
+    }
+    if (values.time.start >= values.time.end) {
+      errors.time.end = "Invalid Time"
+    }
+    return !errors.name && !errors.time.end ? {} : errors
+  }
+
+  const submitForm = (values: FormValues) => {
+    const activity: activity = {id: nanoid() , event: values.name, location: values.location, type: 'hall', time: values.time}
+    dispatch(addActivity(activity, values.day))
+    closeMenu()
+    return
+  }
 
   const getSize = () => {
     return (1 / timings.length) * 200
@@ -97,7 +114,7 @@ const Calender = () => {
               <CalendarContainer key={d.id}>
                 <Days style={getSpecialDayStyle(d.day)}>{d.day}</Days>
                 <HourContainer size={getSize().toString()}>
-                  {activityList[d.id].map((e) => (
+                  {activityList[d.id] && activityList[d.id].map((e) => (
                     <EventCard margin={getMargin(e.time.start)} width={getWidth(e.time)} color={colors[e.type]}>
                       <EventText>{e.event}</EventText>
                       <EventSubText>{e.location}</EventSubText>
@@ -120,8 +137,9 @@ const Calender = () => {
               fullWidth
               PaperProps={{style: {background: '#282a36', color: 'white', padding: '15px'}}}>
         <DialogTitle>{'Add Event/Activity'}</DialogTitle>
-        <Form onSubmit={(values) => console.log(values)}
+        <Form onSubmit={submitForm}
               initialValues={{...initialForm}}
+              validate={validateForm}
               render={({handleSubmit, form, submitting, pristine, values}) => (
                 <form onSubmit={handleSubmit}>
                   <DialogContent style={{
@@ -130,7 +148,7 @@ const Calender = () => {
                     justifyContent: 'space-evenly',
                     minHeight: '250px'
                   }}>
-                    <DateSelect>
+                    <FlexSelect>
                       <Field name='day'>
                         {props => (
                           <FormControl>
@@ -171,12 +189,14 @@ const Calender = () => {
                                   <MenuItem value={t}>{t}</MenuItem>
                                 ))}
                               </Select>
+                              {props.meta.error && (
+                                <FormHelperText style={{color: 'white'}}>Invalid Time</FormHelperText>)}
                             </FormControl>
                           )}
                         </Field>
                       </TimeSelect>
 
-                    </DateSelect>
+                    </FlexSelect>
                     <Field name='name'>
                       {props => (
                         <FormControl>
@@ -185,30 +205,46 @@ const Calender = () => {
                                      onChange={props.input.onChange}
                                      fullWidth
                                      InputLabelProps={{style: {background: '#282a36', color: 'white'}}}>
-
                           </TextField>
+                          {props.meta.error && (<FormHelperText style={{color: 'white'}}>Required</FormHelperText>)}
                         </FormControl>
                       )}
                     </Field>
-                    <Field name='type'>
-                      {props => (
-                        <div>
+                    <FlexSelect>
+                      <Field name='type'>
+                        {props => (
+                          <div>
+                            <FormControl>
+                              <InputLabel style={{background: '#282a36', color: 'white'}}>Type</InputLabel>
+                              <Select label={props.input.name}
+                                      value={props.input.value}
+                                      onChange={props.input.onChange}>
+                                <MenuItem value='event'>Event</MenuItem>
+                                <MenuItem value='activity'>Activity</MenuItem>
+                              </Select>
+                            </FormControl>
+                          </div>
+                        )}
+                      </Field>
+                      <Field name='location'>
+                        {props => (
                           <FormControl>
-                            <InputLabel style={{background: '#282a36', color: 'white'}}>Type</InputLabel>
+                            <InputLabel style={{background: '#282a36', color: 'white'}}>Location</InputLabel>
                             <Select label={props.input.name}
                                     value={props.input.value}
                                     onChange={props.input.onChange}>
-                              <MenuItem value='event'>Event</MenuItem>
-                              <MenuItem value='activity'>Activity</MenuItem>
+                              {locations.map((l) => (
+                                <MenuItem value={l}>{l}</MenuItem>
+                              ))}
                             </Select>
                           </FormControl>
-                        </div>
-                      )}
-                    </Field>
+                        )}
+                      </Field>
+                    </FlexSelect>
                   </DialogContent>
                   <DialogActions>
                     <Button variant="contained" onClick={closeMenu}>Cancel</Button>
-                    <Button variant="contained" onClick={closeMenu} type='submit'>Add</Button>
+                    <Button variant="contained" type='submit' disabled={submitting}>Add</Button>
                   </DialogActions>
                 </form>
               )}/>
