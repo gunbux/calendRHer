@@ -9,7 +9,7 @@ def getAllEvents():
     userID = request.args["userID"]
     x = db.UserList.find({"userID":userID})
     x = list(x)
-    eventsIDList = x[0].get("eventID")  # only works if there is only 1 object in x
+    eventsIDList = x[0].get("eventID") 
     eventsNameList = [] 
     for theEvent in eventsIDList:
         y = db.EventList.aggregate( [ 
@@ -17,6 +17,7 @@ def getAllEvents():
             { "$project" : {  "eventName" : 1 , "startDate" : 1, "endDate" : 1, "eventID":1, "eventLocation" : 1, "_id" : 0 } }
              ] )
         y = list(y)
-        eventsNameList.append(y[0])
+        for a in y:
+            eventsNameList.append(y)
     eventsNameList = str(eventsNameList)
-    return eventsNameList                          #returns list of all event names participated by user
+    return eventsNameList                       
