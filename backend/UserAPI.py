@@ -14,18 +14,9 @@ def getAllEvents():
     for theEvent in eventsIDList:
         y = db.EventList.aggregate( [ 
             { "$match": { "eventID": theEvent } },
-            { "$project" : {  "eventName" : 1 , "_id" : 0 } }
+            { "$project" : {  "eventName" : 1 , "startDate" : 1, "endDate" : 1, "eventID":1, "eventLocation" : 1, "_id" : 0 } }
              ] )
         y = list(y)
-        for theElement in y:
-            eventsNameList.append(y[0].get("eventName"))
-    return str(eventsNameList)                          #returns list of all event names participated by user
-
-
-
-
-
-
-
-    
-
+        eventsNameList.append(y[0])
+    eventsNameList = str(eventsNameList)
+    return eventsNameList                          #returns list of all event names participated by user
