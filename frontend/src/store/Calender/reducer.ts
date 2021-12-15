@@ -45,6 +45,9 @@ export const calender: Reducer<State, ActionTypes> = (state = initialState, acti
         activityList: {...state.activityList, [val.day]: [...state.activityList[val.day], val.activity]}
       }
 
+    case CALENDER_ACTIONS.GET_ACTIVITIES:
+      return state
+
     case CALENDER_ACTIONS.DELETE_ACTIVITY:
       return state
 

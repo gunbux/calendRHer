@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/types";
 
@@ -33,7 +33,7 @@ import InputLabel from "@mui/material/InputLabel";
 import TextField from '@mui/material/TextField'
 import FormHelperText from '@mui/material/FormHelperText'
 import {Form, Field} from 'react-final-form'
-import {addActivity} from "../../store/Calender/action";
+import {addActivity, getActivities} from "../../store/Calender/action";
 import {nanoid} from "nanoid";
 import {activity} from "../../store/Calender/types";
 
@@ -48,6 +48,10 @@ const Calender = () => {
   const dispatch = useDispatch()
   const {eventList, activityList} = useSelector((state: RootState) => state.calender)
   const [isMenuOpen, setMenuOpen] = useState<boolean>(false)
+
+  useEffect(() => {
+    dispatch(getActivities())
+  })
 
   const toggleMenu = () =>
     setMenuOpen(!isMenuOpen)
@@ -67,7 +71,13 @@ const Calender = () => {
   }
 
   const submitForm = (values: FormValues) => {
-    const activity: activity = {id: nanoid() , event: values.name, location: values.location, type: 'hall', time: values.time}
+    const activity: activity = {
+      id: nanoid(),
+      event: values.name,
+      location: values.location,
+      type: 'hall',
+      time: values.time
+    }
     dispatch(addActivity(activity, values.day))
     closeMenu()
     return
@@ -148,68 +158,83 @@ const Calender = () => {
                     justifyContent: 'space-evenly',
                     minHeight: '250px'
                   }}>
-                    <FlexSelect>
-                      <Field name='day'>
-                        {props => (
-                          <FormControl>
-                            <InputLabel style={{background: '#282a36', color: 'white'}}>Day</InputLabel>
-                            <Select label={props.input.name}
-                                    value={props.input.value}
-                                    onChange={props.input.onChange}>
-                              {days.map((d) => (
-                                <MenuItem value={d.id}>{d.day}</MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        )}
-                      </Field>
-                      <TimeSelect>
+                    {values.type === 'activity' && <>
+                        <FlexSelect>
+                            <Field name='day'>
+                              {props => (
+                                <FormControl>
+                                  <InputLabel style={{background: '#282a36', color: 'white'}}>Day</InputLabel>
+                                  <Select label={props.input.name}
+                                          value={props.input.value}
+                                          onChange={props.input.onChange}>
+                                    {days.map((d) => (
+                                      <MenuItem value={d.id} key={d.id}>{d.day}</MenuItem>
+                                    ))}
+                                  </Select>
+                                </FormControl>
+                              )}
+                            </Field>
+                            <TimeSelect>
 
-                        <Field name='time.start'>
+                                <Field name='time.start'>
+                                  {props => (
+                                    <FormControl>
+                                      <InputLabel style={{background: '#282a36', color: 'white'}}>Start</InputLabel>
+                                      <Select label={props.input.name}
+                                              value={props.input.value}
+                                              onChange={props.input.onChange}>
+                                        {timings.map((t) => (
+                                          <MenuItem value={t} key={t}>{t}</MenuItem>
+                                        ))}
+                                      </Select>
+                                    </FormControl>)}
+                                </Field>
+                                <Field name='time.end'>
+                                  {props => (
+                                    <FormControl>
+                                      <InputLabel style={{background: '#282a36', color: 'white'}}>End</InputLabel>
+                                      <Select label={props.input.name}
+                                              value={props.input.value}
+                                              onChange={props.input.onChange}>
+                                        {timings.map((t) => (
+                                          <MenuItem value={t} key={t}>{t}</MenuItem>
+                                        ))}
+                                      </Select>
+                                      {props.meta.error && (
+                                        <FormHelperText style={{color: 'white'}}>Invalid Time</FormHelperText>)}
+                                    </FormControl>
+                                  )}
+                                </Field>
+                            </TimeSelect>
+
+                        </FlexSelect>
+                        <Field name='name'>
                           {props => (
                             <FormControl>
-                              <InputLabel style={{background: '#282a36', color: 'white'}}>Start</InputLabel>
-                              <Select label={props.input.name}
-                                      value={props.input.value}
-                                      onChange={props.input.onChange}>
-                                {timings.map((t) => (
-                                  <MenuItem value={t}>{t}</MenuItem>
-                                ))}
-                              </Select>
-                            </FormControl>)}
-                        </Field>
-                        <Field name='time.end'>
-                          {props => (
-                            <FormControl>
-                              <InputLabel style={{background: '#282a36', color: 'white'}}>End</InputLabel>
-                              <Select label={props.input.name}
-                                      value={props.input.value}
-                                      onChange={props.input.onChange}>
-                                {timings.map((t) => (
-                                  <MenuItem value={t}>{t}</MenuItem>
-                                ))}
-                              </Select>
-                              {props.meta.error && (
-                                <FormHelperText style={{color: 'white'}}>Invalid Time</FormHelperText>)}
+                              <TextField label='Name'
+                                         value={props.input.value}
+                                         onChange={props.input.onChange}
+                                         fullWidth
+                                         InputLabelProps={{style: {background: '#282a36', color: 'white'}}}>
+                              </TextField>
+                              {props.meta.error && (<FormHelperText style={{color: 'white'}}>Required</FormHelperText>)}
                             </FormControl>
                           )}
                         </Field>
-                      </TimeSelect>
-
-                    </FlexSelect>
-                    <Field name='name'>
+                    </>}
+                    {values.type === 'event' && <Field name='group'>
                       {props => (
                         <FormControl>
-                          <TextField label='Name'
-                                     value={props.input.value}
-                                     onChange={props.input.onChange}
-                                     fullWidth
-                                     InputLabelProps={{style: {background: '#282a36', color: 'white'}}}>
-                          </TextField>
-                          {props.meta.error && (<FormHelperText style={{color: 'white'}}>Required</FormHelperText>)}
+                          <InputLabel style={{background: '#282a36', color: 'white'}}>Event</InputLabel>
+                          <Select label={props.input.name}
+                                  value={props.input.value}
+                                  onChange={props.input.onChange}>
+                            <MenuItem value='Inter Hall Hackathon' key='Inter Hall Hackathon'>Inter Hall
+                              Hackathon</MenuItem>
+                          </Select>
                         </FormControl>
                       )}
-                    </Field>
+                    </Field>}
                     <FlexSelect>
                       <Field name='type'>
                         {props => (
@@ -226,7 +251,8 @@ const Calender = () => {
                           </div>
                         )}
                       </Field>
-                      <Field name='location'>
+
+                      {values.type === 'activity' && <Field name='location'>
                         {props => (
                           <FormControl>
                             <InputLabel style={{background: '#282a36', color: 'white'}}>Location</InputLabel>
@@ -239,7 +265,7 @@ const Calender = () => {
                             </Select>
                           </FormControl>
                         )}
-                      </Field>
+                      </Field>}
                     </FlexSelect>
                   </DialogContent>
                   <DialogActions>

@@ -5,6 +5,19 @@ import API from '../api'
 //API reference
 //  API.get("user/query/", {params: query}).then(res => console.log(res.data, res))
 
+const query: Record<string, unknown> = {
+  userID: 'A1237895B'
+}
+
+export const getActivities = () => async (dispatch: Dispatch<ActionTypes>) => {
+  const res = await API.get("user/query/", {params: query})
+  console.log(typeof res.data)
+  dispatch({
+    type: CALENDER_ACTIONS.GET_ACTIVITIES,
+    update: res.data
+  })
+}
+
 export const addEvent = (eventId: number) => (dispatch: Dispatch<ActionTypes>) => {
   dispatch({
     type: CALENDER_ACTIONS.ADD_EVENT,
@@ -27,10 +40,6 @@ export const addActivity = (a: activity, d: string) => (dispatch: Dispatch<Actio
     startDate: d + ' ' + a.time.start,
     endDate: d + ' ' + a.time.end
   }
-  const query: Record<string, unknown> = {
-    userID: 'A1237895B'
-  }
-  API.get("user/query/", {params: query}).then(res => console.log(res.data, res))
   // axios({
   //   method: 'GET',
   //   url: 'https://calenrher-backend.herokuapp.com/user/query/',
