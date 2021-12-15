@@ -23,12 +23,12 @@ def join_event():
     for y in y:
         y=y.get("eventID")
 
-    if int(eventIDInput) not in y and userIDInput not in x:        #prevent repeated values in both userlist and eventlist
-        db.EventList.update_one({'eventID': int(eventIDInput)}, {'$push': {'userID': userIDInput}})
-        db.UserList.update_one({'userID': userIDInput}, {'$push': {'eventID': int(eventIDInput)}})
-        return "event joined successfully"
+    if eventIDInput not in y and userIDInput not in x:        #prevent repeated values in both userlist and eventlist
+        db.EventList.update_one({'eventID': eventIDInput}, {'$push': {'userID': userIDInput}})
+        db.UserList.update_one({'userID': userIDInput}, {'$push': {'eventID': eventIDInput}})
+        return 'JOIN_EVENT_SUCCESS' 
     else:
-        return "event already exist in user's itinery or user has already joined event"
+        return 'JOIN_EVENT_ERROR' 
 
 if __name__ == "__main__":
     app.run(debug=True)
