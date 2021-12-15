@@ -1,6 +1,8 @@
-export type activity = { id: number, event: string, location: string, type: string, time: { start: string, end: string } }
+export type activity = { id: string, event: string, location: string, type: string, time: { start: string, end: string } }
 
 export type EventType = string
+
+export type EventQuery = {startDate: string, endDate: string, eventName: string, eventID: string, location: string}
 
 type days = string
 
@@ -13,6 +15,8 @@ export enum CALENDER_ACTIONS {
   GET_ACTIVITIES = 'CALENDER_ACTIONS.GET_ACTIVITIES',
   ADD_EVENT = 'CALENDER_ACTIONS.ADD_EVENT',
   DELETE_EVENT = 'CALENDER_ACTIONS.DELETE_EVENT',
+  ADD_ACTIVITY = 'CALENDER_ACTIONS.ADD_ACTIVITY',
+  DELETE_ACTIVITY = 'CALENDER_ACTIONS.DELETE_ACTIVITY',
   ADD_ACTIVITIES = 'CALENDER_ACTIONS.ADD_ACTIVITIES',
   DELETE_ACTIVITIES = 'CALENDER_ACTIONS.DELETE_ACTIVITIES'
 }
@@ -25,6 +29,16 @@ type addEvent = {
 type deleteEvent = {
   type: typeof CALENDER_ACTIONS.DELETE_EVENT
   response: number
+}
+
+type addActivity = {
+  type: typeof CALENDER_ACTIONS.ADD_ACTIVITY
+  response: {day: string, activity: activity}
+}
+
+type deleteActivity = {
+  type: typeof CALENDER_ACTIONS.DELETE_ACTIVITY
+  response: {day: string, activity: activity}
 }
 
 type addActivities = {
@@ -42,3 +56,5 @@ export type ActionTypes =
   | deleteEvent
   | addActivities
   | deleteActivities
+  | addActivity
+  | deleteActivity

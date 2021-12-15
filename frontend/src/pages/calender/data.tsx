@@ -18,4 +18,8 @@ export const colors: Record<EventType, string> = {
     cca: '#bd93f9'
 }
 
-export const initialForm = {type: 'activity', name: '', time: {start: '0600', end: '0600'}, day: 'mon'}
+export const initialForm = {type: 'activity', name: '', time: {start: '0600', end: '0600'}, day: 'mon', location:'Kuok'}
+
+export type FormValues = {type: string, name: string, time: {start: string, end: string}, day: string, location: string}
+
+export const locations = ['Upper Lounge', 'Lower Lounge', 'TV Room', 'Kuok Conference Room', 'Kuok', 'Comm Hall', 'Gym']
