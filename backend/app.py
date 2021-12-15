@@ -1,4 +1,5 @@
 from flask import Flask,jsonify,request
+from flask_cors import CORS
 from pymongo import cursor
 from db import db
 import pymongo
@@ -6,6 +7,7 @@ from UserAPI import user
 from EventsAPI import event
 
 app = Flask(__name__)
+CORS(app)
 app.register_blueprint(user, url_prefix="/user")
 app.register_blueprint(event, url_prefix="/event")
 
@@ -26,9 +28,9 @@ def join_event():
     if eventIDInput not in y and userIDInput not in x:        #prevent repeated values in both userlist and eventlist
         db.EventList.update_one({'eventID': eventIDInput}, {'$push': {'userID': userIDInput}})
         db.UserList.update_one({'userID': userIDInput}, {'$push': {'eventID': eventIDInput}})
-        return 'JOIN_EVENT_SUCCESS' 
+        return 'JOIN_EVENT_SUCCESS'
     else:
-        return 'JOIN_EVENT_ERROR' 
+        return 'JOIN_EVENT_ERROR'
 
 if __name__ == "__main__":
     app.run(debug=True)
