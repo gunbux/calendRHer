@@ -1,5 +1,4 @@
 .idea
 node_modules
 backend/env/
-db.py
 _pycache_/
