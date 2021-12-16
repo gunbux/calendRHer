@@ -2,7 +2,7 @@ export type activity = { id: string, event: string, location: string, type: stri
 
 export type EventType = string
 
-export type EventQuery = { startDate: string, endDate: string, eventName: string, eventID: string, location: string }
+export type EventQuery = { startDate: string, endDate: string, eventName: string, eventID: string, eventLocation: string }
 
 type days = string
 
@@ -23,7 +23,7 @@ export enum CALENDER_ACTIONS {
 
 type getActivities = {
   type: typeof CALENDER_ACTIONS.GET_ACTIVITIES
-  update: string
+  update: EventQuery[]
 }
 
 type addEvent = {

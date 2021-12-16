@@ -51,7 +51,7 @@ const Calender = () => {
 
   useEffect(() => {
     dispatch(getActivities())
-  })
+  }, [])
 
   const toggleMenu = () =>
     setMenuOpen(!isMenuOpen)
@@ -92,7 +92,8 @@ const Calender = () => {
     }
     const res = events[values.group]
     console.log(res)
-    // dispatch(addActivities(res))
+    dispatch(addActivities(res))
+    closeMenu()
     return
   }
 

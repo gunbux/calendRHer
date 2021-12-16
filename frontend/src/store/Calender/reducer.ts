@@ -1,17 +1,11 @@
 import {Reducer} from 'redux'
-import {ActionTypes, ActivityList, CALENDER_ACTIONS} from "./types";
+import {ActionTypes, activity, ActivityList, CALENDER_ACTIONS} from "./types";
 import {days} from "../../pages/calender/data";
 
 const initialState = {
   eventList: [1, 2, 3],
   activityList: {
-    mon: [
-      {id: '1', event: 'RHDevs Training', location: 'Upper Lounge', type: 'academic', time: {start: '0800', end: '1000'}},
-      {id: '2', event: 'RHMP Recording', location: 'Raffles Hall', type: 'hall', time: {start: '1000', end: '1200'}},
-      {id: '3', event: 'RHMP Bonding Event', location: 'UTown', type: 'hall', time: {start: '1200', end: '1400'}},
-      {id: '4', event: 'Hall event', location: 'Raffles Hall', type: 'hall', time: {start: '1400', end: '1700'}},
-      {id: '5', event: 'GET1020 Lecture', location: 'Online', type: 'academic', time: {start: '1700', end: '1800'}},
-    ], tue: [], wed: [], thu: [], fri: []
+    mon: [], tue: [], wed: [], thu: [], fri: []
   }
 }
 
@@ -30,7 +24,12 @@ export const calender: Reducer<State, ActionTypes> = (state = initialState, acti
       return {...state, eventList: state.eventList.filter((e) => e !== action.response)}
 
     case CALENDER_ACTIONS.ADD_ACTIVITIES:
-      return {...state, activityList: days.map((d) => [...state.activityList[d.id], ...action.response[d.id]])}
+      const value = action.response
+      Object.keys(value).forEach((k) => {
+        value[k] = [...state.activityList[k], ...value[k]]
+      })
+      // console.log(value)
+      return {...state, activityList: {...state.activityList, ...value}}
 
     case CALENDER_ACTIONS.DELETE_ACTIVITIES:
       return {
@@ -46,7 +45,34 @@ export const calender: Reducer<State, ActionTypes> = (state = initialState, acti
       }
 
     case CALENDER_ACTIONS.GET_ACTIVITIES:
-      return state
+      const init = action.update
+      const r: Partial<ActivityList> = {}
+      init.forEach((e) => {
+        console.log(e, 'e')
+        const day = e.startDate.split(' ')[0]
+        const start = e.startDate.split(' ')[1]
+        const end = e.endDate.split(' ')[1]
+        console.log(day)
+        // @ts-ignore
+        r[day] ? r[day].push({id: e.eventID, location: e.eventLocation, event: e.eventName, type: 'hall', time: {start, end}})
+          : r[day] = [{
+            id: e.eventID,
+            location: e.eventLocation,
+            event: e.eventName,
+            type: 'hall',
+            time: {start, end}
+          }]
+      })
+
+      console.log(r)
+
+      Object.keys(r).forEach((k) => {
+        // @ts-ignore
+        r[k] = [...r[k], ...state.activityList[k]]
+      })
+
+      console.log(r)
+      return {...state, activityList: {...state.activityList, ...r}}
 
     case CALENDER_ACTIONS.DELETE_ACTIVITY:
       return state

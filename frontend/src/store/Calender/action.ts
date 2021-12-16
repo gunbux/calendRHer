@@ -11,10 +11,12 @@ const query: Record<string, unknown> = {
 
 export const getActivities = () => async (dispatch: Dispatch<ActionTypes>) => {
   const res = await API.get("user/query/", {params: query})
-  console.log(typeof res.data)
+  const strdata = res.data.replaceAll("'", '"')
+  const data = JSON.parse(strdata)
+  // console.log(data)
   dispatch({
     type: CALENDER_ACTIONS.GET_ACTIVITIES,
-    update: res.data
+    update: data
   })
 }
 
@@ -36,7 +38,7 @@ export const addActivity = (a: activity, d: string) => (dispatch: Dispatch<Actio
   const queryBody: EventQuery = {
     eventID: a.id,
     eventName: a.event,
-    location: a.location,
+    eventLocation: a.location,
     startDate: d + ' ' + a.time.start,
     endDate: d + ' ' + a.time.end
   }

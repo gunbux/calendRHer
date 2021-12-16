@@ -18,6 +18,19 @@ export const colors: Record<EventType, string> = {
   cca: '#bd93f9'
 }
 
+export const mock = [
+  {
+    id: '1',
+    event: 'RHDevs Training',
+    location: 'Upper Lounge',
+    type: 'academic',
+    time: {start: '0800', end: '1000'}
+  },
+  {id: '2', event: 'RHMP Recording', location: 'Raffles Hall', type: 'hall', time: {start: '1000', end: '1200'}},
+  {id: '3', event: 'RHMP Bonding Event', location: 'UTown', type: 'hall', time: {start: '1200', end: '1400'}},
+  {id: '4', event: 'Hall event', location: 'Raffles Hall', type: 'hall', time: {start: '1400', end: '1700'}},
+  {id: '5', event: 'GET1020 Lecture', location: 'Online', type: 'academic', time: {start: '1700', end: '1800'}},]
+
 export const events: Record<string, ActivityList> = {
   'Inter Hall Hackathon': {
     wed: [
@@ -25,21 +38,21 @@ export const events: Record<string, ActivityList> = {
         id: 'asd',
         event: 'UI/UX Workshop',
         location: 'Online',
-        type: 'Others',
+        type: 'others',
         time: {start: '1600', end: '1800'}
       },
       {
         id: 'poi',
         event: 'Down the Crypto Rabbit Hole',
         location: 'Online',
-        type: 'Others',
+        type: 'others',
         time: {start: '1400', end: '1600'}
       }], thu: [
       {
         id: 'utqeow',
-        event: 'InterHall Hackathon Judging',
+        event: 'Hackathon Judging',
         location: 'Online',
-        type: 'Others',
+        type: 'others',
         time: {start: '1300', end: '1400'}
       }
     ]
