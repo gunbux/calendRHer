@@ -34,7 +34,7 @@ export const deleteEvent = (eventId: number) => (dispatch: Dispatch<ActionTypes>
   })
 }
 
-export const addActivity = (a: activity, d: string) => (dispatch: Dispatch<ActionTypes>) => {
+export const addActivity = (a: activity, d: string) => async (dispatch: Dispatch<ActionTypes>) => {
   const queryBody: EventQuery = {
     eventID: a.id,
     eventName: a.event,
@@ -42,19 +42,22 @@ export const addActivity = (a: activity, d: string) => (dispatch: Dispatch<Actio
     startDate: d + ' ' + a.time.start,
     endDate: d + ' ' + a.time.end
   }
-  // axios({
-  //   method: 'GET',
-  //   url: 'https://calenrher-backend.herokuapp.com/user/query/',
-  //   params: query
-  // })
-  //   .then(res => {
-  //     console.log(res);
-  //     console.log(res.data);
-  //   })
-  dispatch({
-    type: CALENDER_ACTIONS.ADD_ACTIVITY,
-    response: {day: d, activity: a}
-  })
+  const res = await API.post("event/create/", {}, {params: queryBody})
+  const res2 = await API.post('/join/', {}, {params: {...query, eventID: a.id}})
+    // axios({
+    //   method: 'GET',
+    //   url: 'https://calenrher-backend.herokuapp.com/user/query/',
+    //   params: query
+    // })
+    //   .then(res => {
+    //     console.log(res);
+    //     console.log(res.data);
+    //   })
+  console.log(queryBody)
+    dispatch({
+      type: CALENDER_ACTIONS.ADD_ACTIVITY,
+      response: {day: d, activity: a}
+    })
 }
 
 export const deleteActivity = (a: activity, d: string) => (dispatch: Dispatch<ActionTypes>) => {
